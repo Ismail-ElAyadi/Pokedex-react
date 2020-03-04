@@ -1,45 +1,66 @@
 import React, { Component } from "react";
 import "./App.css";
-//var Pokedex = require("pokedex-promise-v2");
-//let P = new Pokedex();
 
 export default class App extends Component {
   state = {
     error: null,
     isLoaded: false,
-    items: [{color: {
-      name:"red",
-    }},{color: {
-      name:"blue",
-    }}]
+    items: [],
+    next: null ,
+    previous: null
+
   };
+
+  nextPokemon = () => {
+    fetch(this.state.next)
+    .then(res => res.json())
+    .then(
+      infos => {        
+        this.setState({
+          isLoaded: true,
+          items: infos.results,
+          next : infos.next,
+          previous: infos.previous
+        });
+      },
+      error => {
+        console.log(error);
+      }
+    );
+
+  }
+
+  previousPokemon = () => {
+    fetch(this.state.previous)
+    .then(res => res.json())
+    .then(
+      infos => {        
+        this.setState({
+          isLoaded: true,
+          items: infos.results,
+          next : infos.next,
+          previous: infos.previous
+        });
+      },
+      error => {
+        console.log(error);
+      }
+    );
+
+  }
+
   componentDidMount() {
-    let allPokemon = [];
-    fetch("https://pokeapi.co/api/v2/pokemon-species/")
+    fetch("https://pokeapi.co/api/v2/pokemon-species/?offset=0&limit=20")
       .then(res => res.json())
       .then(
         infos => {
-          let nbrPokemon = infos.count;
-          console.log(nbrPokemon);
-
-          for (let i = 1; i < nbrPokemon; i++) {
-            fetch(`https://pokeapi.co/api/v2/pokemon-species/${i}`)
-              .then(res => res.json())
-              .then(infos => {
-                allPokemon.push(infos);
-
-              });
-
-          }
-
-
+          console.log(infos)
           this.setState({
             isLoaded: true,
-            items: allPokemon ,
-
+            items: infos.results,
+            next : infos.next,
+            previous: infos.previous
           });
-
-          console.log(allPokemon.map(el => alert(el)),"here")
         },
 
         error => {
@@ -47,6 +68,24 @@ export default class App extends Component {
         }
       );
   }
+  numbrPokemon = (e) => {
+    fetch(`https://pokeapi.co/api/v2/pokemon-species/?offset=0&limit=${e.currentTarget.value}`)
+    .then(res => res.json())
+    .then(
+      infos => {        
+        this.setState({
+          isLoaded: true,
+          items: infos.results,
+          next : infos.next,
+          previous: infos.previous
+        });
+      },
+      error => {
+        console.log(error);
+      }
+    );
+      
+  } 
   /*  const youpi = this.state.items.names;
  let getFr = () => {
    for (let i = 0; i < 10; i++) {
@@ -58,7 +97,7 @@ export default class App extends Component {
  }; */
 
   render() {
-    const { error, isLoaded, items,} = this.state;
+    const { error, isLoaded, items } = this.state;
     if (this.state.error) {
       return <div>Erreur : {error.message}</div>;
     } else if (!isLoaded) {
@@ -68,11 +107,19 @@ export default class App extends Component {
         <div>
           <h1>wesh khou</h1>
           <ul>
-            {items.map((item, index) => (
-             <li key = {index}> {item.color.name} </li>
+            {items && items.map((item, index) => (
+              <li key = {index}> {item.name} </li>
             ))}
           </ul>
+          <button onClick={this.previousPokemon} disabled={!this.state.previous}> Previous </button> 
+          <button onClick={this.nextPokemon} disabled={!this.state.next}> Next </button> 
+          <select  onChange = {this.numbrPokemon}>
+          <option value = "50">50</option>
+          <option value = "100">100</option>
+          <option value = "150">150</option>
+          </select>
         </div>
+
       );
     }
   }
