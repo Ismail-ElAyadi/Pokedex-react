@@ -13,6 +13,9 @@ export default class App extends Component {
   };
 
   nextPokemon = () => {
+    this.setState({
+      isLoaded: false
+    })
     let nomFR = [];
     fetch(this.state.next)
     .then(res => res.json())
@@ -52,6 +55,9 @@ export default class App extends Component {
   };
 
   previousPokemon = () => {
+    this.setState({
+      isLoaded: false
+    })
     let nomFR = [];
     fetch(this.state.previous)
     .then(res => res.json())
@@ -129,6 +135,10 @@ export default class App extends Component {
       );
   }
   numbrPokemon = e => {
+    this.setState({
+      isLoaded: false
+    })
+
     let nomFR = [];
     fetch(
       `https://pokeapi.co/api/v2/pokemon-species/?offset=0&limit=${e.currentTarget.value}`
@@ -174,7 +184,7 @@ export default class App extends Component {
     if (this.state.error) {
       return <div>Erreur : {error.message}</div>;
     } else if (!isLoaded) {
-      return <div>Chargement…</div>;
+      return <img src="https://i.pinimg.com/originals/4e/a2/3e/4ea23e6339937b95a8aa5cd08eeb3266.gif" />;
     } else {
       return (
         <div>
