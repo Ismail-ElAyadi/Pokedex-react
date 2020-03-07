@@ -5,104 +5,51 @@ export default class Body extends Component {
     error: null,
     isLoaded: false,
     items: [],
+    current:null,
     next: null,
     previous: null,
-    idLangue: null,
-    nameFr: []
+    Langue: "fr",
+    NamePokemon: [],
+    numbr: 10,
+    offset:0,
   };
 
-  nextPokemon = () => {
-    this.setState({
-      isLoaded: false
-    })
-    let nomFR = [];
-    fetch(this.state.next)
-    .then(res => res.json())
-    .then(
-      infos => {
-        let infosPokemon = infos.results;
-        this.setState({
-          items: infos.results,
-          next: infos.next,
-          previous: infos.previous
-        });
-        infosPokemon.map(el => {
-          fetch(el.url)
-            .then(res => res.json())
-            .then(infos => {
-              let tableauLangue = infos.names;
-              //console.log(infos,"here")
-              infos.names.forEach(langue => {
-                let idfr = ()=> {
-                  if (langue.language.name === "fr") {
-                    nomFR.push(langue.name);
-                  }
-                }
-                this.setState({
-                  idLangue: idfr(),
-                  nameFr: nomFR,
-                  isLoaded: true
-                });
-              });
-            });
-        });
-      },
-      error => {
-        console.log(error);
-      }
-    );
-  };
-
-  previousPokemon = () => {
-    this.setState({
-      isLoaded: false
-    })
-    let nomFR = [];
-    fetch(this.state.previous)
-    .then(res => res.json())
-    .then(
-      infos => {
-        let infosPokemon = infos.results;
-        this.setState({
-          items: infos.results,
-          next: infos.next,
-          previous: infos.previous
-        });
-        infosPokemon.map(el => {
-          fetch(el.url)
-            .then(res => res.json())
-            .then(infos => {
-              let tableauLangue = infos.names;
-              //console.log(infos,"here")
-              infos.names.forEach(langue => {
-                let idfr = ()=> {
-                  if (langue.language.name === "fr") {
-                    nomFR.push(langue.name);
-                  }
-                }
-                this.setState({
-                  idLangue: idfr(),
-                  nameFr: nomFR,
-                  isLoaded: true
-                });
-              });
-            });
-        });
-      },
-      error => {
-        console.log(error);
-      }
-    );
-  };
 
   componentDidMount() {
-    let nomFR = [];
-    fetch("https://pokeapi.co/api/v2/pokemon-species/?offset=0&limit=10")
+    this.fetchPokemon()
+  }
+  langPokemon = (e) => {
+    this.setState({
+      isLoaded: false,
+      Langue: e.currentTarget.value
+    }, () => this.fetchPokemon())
+
+
+  }
+  numbrPokemon = e => {
+    if (e.currentTarget.value != null) {
+      this.setState({
+        isLoaded: false,
+        numbr: e.currentTarget.value,
+      }, () => this.fetchPokemon())
+    }
+  };
+
+  fetchPokemon = (link) => {
+    let AllPokemon = [];
+    let fetcher;
+    if (link) {
+      fetcher = link
+    } else {
+      fetcher = `https://pokeapi.co/api/v2/pokemon-species/?offset=${this.state.offset}&limit=${this.state.numbr}`
+    }
+    fetch(fetcher)
       .then(res => res.json())
       .then(
         infos => {
           let infosPokemon = infos.results;
           this.setState({
+            ready: false,
             items: infos.results,
             next: infos.next,
             previous: infos.previous
@@ -111,17 +58,12 @@ export default class Body extends Component {
             fetch(el.url)
               .then(res => res.json())
               .then(infos => {
-                let tableauLangue = infos.names;
-                //console.log(infos,"here")
                 infos.names.forEach(langue => {
-                  let idfr = ()=> {
-                    if (langue.language.name === "fr") {
-                      nomFR.push(langue.name);
-                    }
+                  if (langue.language.name === this.state.Langue) {
+                    AllPokemon.push(langue.name);
                   }
                   this.setState({
-                    idLangue: idfr(),
-                    nameFr: nomFR,
+                    NamePokemon: AllPokemon,
                     isLoaded: true
                   });
                 });
@@ -129,66 +71,41 @@ export default class Body extends Component {
           });
         },
         error => {
+          this.setState({
+            error:error
+          })
           console.log(error);
         }
       );
   }
-  numbrPokemon = e => {
+  nextPokemon = () => {
     this.setState({
       isLoaded: false
-    })
+    }, () => this.fetchPokemon(this.state.next))
 
-    let nomFR = [];
-    fetch(
-      `https://pokeapi.co/api/v2/pokemon-species/?offset=0&limit=${e.currentTarget.value}`
-    )
-    .then(res => res.json())
-    .then(
-      infos => {
-        let infosPokemon = infos.results;
-        this.setState({
-          items: infos.results,
-          next: infos.next,
-          previous: infos.previous
-        });
-        infosPokemon.map(el => {
-          fetch(el.url)
-            .then(res => res.json())
-            .then(infos => {
-              console.log(infos,"here")
-              infos.names.forEach(langue => {
-                let idfr = ()=> {
-                  if (langue.language.name === "fr") {
-                    nomFR.push(langue.name);
-                  }
-                }
-                this.setState({
-                  idLangue: idfr(),
-                  nameFr: nomFR,
-                  isLoaded: true
-                });
-              });
-            });
-        });
-      },
-      error => {
-        console.log(error);
-      }
-    );
   };
 
+  previousPokemon = () => {
+    this.setState({
+      isLoaded: false
+    }, () => this.fetchPokemon(this.state.previous))
+  };
+
+
+
+
   render() {
-    const { error, isLoaded, nameFr } = this.state;
+    const { error, isLoaded, NamePokemon } = this.state;
     if (this.state.error) {
       return <div>Erreur : {error.message}</div>;
     } else if (!isLoaded) {
-      return <img src="https://i.pinimg.com/originals/4e/a2/3e/4ea23e6339937b95a8aa5cd08eeb3266.gif" alt ="image loading salamèche"/>;
+      return <img src="https://i.pinimg.com/originals/4e/a2/3e/4ea23e6339937b95a8aa5cd08eeb3266.gif" alt="image loading salamèche" />;
     } else {
       return (
         <div>
-          <h1>wesh khou</h1>
+          <h1>Pokémon</h1>
           <ul>
-            {nameFr.map((item, index) => (
+            {NamePokemon.map((item, index) => (
               <li key={index}> {item} </li>
             ))}
           </ul>
@@ -196,22 +113,26 @@ export default class Body extends Component {
             onClick={this.previousPokemon}
             disabled={!this.state.previous}
           >
-            {" "}
-            Previous{" "}
+            Previous
           </button>
           <button onClick={this.nextPokemon} disabled={!this.state.next}>
-            {" "}
-            Next{" "}
+            Next
           </button>
-          <select onChange={this.numbrPokemon}>
-          <option value="choose">Default</option>
+          <select value={this.state.numbr} onChange={this.numbrPokemon}>
             <option value="10">10</option>
             <option value="20">20</option>
             <option value="30">30</option>
             <option value="40">40</option>
             <option value="50">50</option>
           </select>
+          <select onChange={this.langPokemon}>
+            <option value="fr">FR</option>
+            <option value="en">EN</option>
+            <option value="ja">JA</option>
+          </select>
         </div>
+
+
       );
     }
   }
