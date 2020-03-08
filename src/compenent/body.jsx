@@ -17,7 +17,9 @@ export default class Body extends Component {
     disbalePrevious: false,
     disableNext: true,
   };
+
   offSetApi;
+
   UpdateApi = (param) => {
     this.setState({
       FullAPI: this.state.api + this.state.offset + "&limit=" + this.state.numbr
@@ -29,15 +31,18 @@ export default class Body extends Component {
       }
     })
   }
+
   componentDidMount() {
     this.UpdateApi()
   }
+
   langPokemon = (e) => {
     this.setState({
       isLoaded: false,
       Langue: e.currentTarget.value
     }, () => this.UpdateApi())
   }
+
   numbrPokemon = e => {
     if (e.currentTarget.value != null) {
       this.setState({
@@ -46,7 +51,9 @@ export default class Body extends Component {
       }, () => this.UpdateApi())
     }
   };
+
   fetchPokemon = (paramOffSet) => {
+
     switch (paramOffSet) {
       case "PREVIOUS":
         this.offSetApi = this.state.offset - this.state.numbr
@@ -57,13 +64,14 @@ export default class Body extends Component {
       default: this.offSetApi = this.state.offset
         break;
     }
+
     let AllPokemon = [];
+
     this.setState({
       FullAPI: this.state.api + this.offSetApi + "&limit=" + this.state.numbr
     }, () => {
       console.log(this.state.FullAPI, "api");
-      fetch(this.state.FullAPI
-      )
+      fetch(this.state.FullAPI)
         .then(res => res.json())
         .then(
           infos => {
@@ -103,7 +111,6 @@ export default class Body extends Component {
                   });
                 });
             });
-
           },
           error => {
             this.setState({
@@ -113,16 +120,16 @@ export default class Body extends Component {
           }
         );
     })
-
   }
+
   nextPokemon = () => {
     this.setState({
       isLoaded: false
     }, () => {
       this.UpdateApi("NEXT")
     })
-
   };
+
   previousPokemon = () => {
     this.setState({
       isLoaded: false
@@ -130,6 +137,7 @@ export default class Body extends Component {
       this.UpdateApi("PREVIOUS")
     })
   };
+
   render() {
     const { error, isLoaded, NamePokemon } = this.state;
     if (this.state.error) {
@@ -151,7 +159,9 @@ export default class Body extends Component {
           >
             Previous
           </button>
-          <button onClick={this.nextPokemon} disabled={!this.state.disableNext} >
+          <button
+            onClick={this.nextPokemon}
+            disabled={!this.state.disableNext} >
             Next
           </button>
           <select value={this.state.numbr} onChange={this.numbrPokemon}>
@@ -167,8 +177,6 @@ export default class Body extends Component {
             <option value="ja">JA</option>
           </select>
         </div>
-
-
       );
     }
   }
