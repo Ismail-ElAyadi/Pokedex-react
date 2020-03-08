@@ -5,9 +5,6 @@ export default class Body extends Component {
     error: null,
     isLoaded: false,
     items: [],
-    current: null,
-    next: null,
-    previous: null,
     Langue: "fr",
     NamePokemon: [],
     api: "https://pokeapi.co/api/v2/pokemon-species/?offset=",
@@ -58,7 +55,7 @@ export default class Body extends Component {
       case "PREVIOUS":
         this.offSetApi = this.state.offset - this.state.numbr
         if(this.offSetApi <0 ){
-          this.offSetApi = 0 
+          this.offSetApi = 0
         }
         break;
       case "NEXT":
@@ -79,27 +76,25 @@ export default class Body extends Component {
         .then(
           infos => {
 
-            let infosPokemon = infos.results;
             this.setState({
-              ready: false,
               items: infos.results,
               offset: this.offSetApi,
             }, () => {
               if (this.state.offset <= 0) {
                 this.state.disbalePrevious = false
               }
-              if (this.state.offset > 0) {
+              else {
                 this.state.disbalePrevious = true
               }
               if (infos.next) {
                 this.state.disableNext = true
               }
-              if (!infos.next) {
+              else {
                 this.state.disableNext = false
               };
             });
 
-            infosPokemon.map(el => {
+            infos.results.map(el => {
               fetch(el.url)
                 .then(res => res.json())
                 .then(infos => {
