@@ -57,6 +57,9 @@ export default class Body extends Component {
     switch (paramOffSet) {
       case "PREVIOUS":
         this.offSetApi = this.state.offset - this.state.numbr
+        if(this.offSetApi <0 ){
+          this.offSetApi = 0 
+        }
         break;
       case "NEXT":
         this.offSetApi = this.state.offset + this.state.numbr
@@ -90,7 +93,8 @@ export default class Body extends Component {
               }
               if (infos.next) {
                 this.state.disableNext = true
-              } if (!infos.next) {
+              }
+              if (!infos.next) {
                 this.state.disableNext = false
               };
             });
