@@ -48,10 +48,10 @@ export default class Body extends Component {
   };
   fetchPokemon = (paramOffSet) => {
     switch (paramOffSet) {
-      case "previous":
+      case "PREVIOUS":
         this.offSetApi = this.state.offset - this.state.numbr
         break;
-      case "next":
+      case "NEXT":
         this.offSetApi = this.state.offset + this.state.numbr
         break;
       default: this.offSetApi = this.state.offset
@@ -119,7 +119,7 @@ export default class Body extends Component {
     this.setState({
       isLoaded: false
     }, () => {
-      this.UpdateApi("next")
+      this.UpdateApi("NEXT")
     })
 
   };
@@ -127,7 +127,7 @@ export default class Body extends Component {
     this.setState({
       isLoaded: false
     }, () => {
-      this.UpdateApi("previous")
+      this.UpdateApi("PREVIOUS")
     })
   };
   render() {
