@@ -79,7 +79,6 @@ export default class Body extends Component {
     let AllPokemon = [];
     let idPokedex = [];
 
-
     this.setState(
       {
         FullAPI: this.state.api + this.offSetApi + "&limit=" + this.state.numbr
@@ -117,7 +116,6 @@ export default class Body extends Component {
                     idPokedex.push(infos.id);
 
                     infos.names.forEach(langue => {
-                      
                       if (langue.language.name === this.state.Langue) {
                         AllPokemon.push(langue.name);
                       }
@@ -127,7 +125,6 @@ export default class Body extends Component {
                         idPokemon: idPokedex,
                         isLoaded: true
                       });
-                      
                     });
                   });
               });
@@ -190,10 +187,10 @@ export default class Body extends Component {
             Next
           </button>
           <select value={this.state.numbr} onChange={this.numbrPokemon}>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="30">30</option>
-            <option value="40">40</option>
+            <option value="12">12</option>
+            <option value="24">24</option>
+            <option value="48">48</option>
+            <option value="96">96</option>
             <option value="50">50</option>
           </select>
           <select value={this.state.Langue} onChange={this.langPokemon}>
@@ -201,12 +198,12 @@ export default class Body extends Component {
             <option value="en">EN</option>
             <option value="ja">JA</option>
           </select>
-          <ul>
+          <ul className="listePokemon">
             {NamePokemon.map((item, index) => (
-              <li key={index}>
-                <img height="100px" width="100px" className="imgPokemon"
+              <li className="cardPokemon col-3 bg-warning" key={index}>
+                <img
+                  className="imgPokemon"
                   src={`https://pokeres.bastionbot.org/images/pokemon/${idPokemon[index]}.png`}
-                  
                 />
                 <p className="nomPokemon">{item}</p>
               </li>
